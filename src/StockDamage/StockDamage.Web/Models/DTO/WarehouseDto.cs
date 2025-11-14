@@ -1,0 +1,54 @@
+﻿namespace StockDamage.Web.Models.DTO
+{
+    public class WarehouseDto
+    {
+        public long AutoSlNo { get; set; }
+        public string GodownName { get; set; } = null!;
+    }
+
+    public class ItemDto
+    {
+        public long AutoSlNo { get; set; }
+        public string SubItemName { get; set; } = null!;
+        public string SubItemCode { get; set; } = null!;
+        public string Unit { get; set; } = null!;
+    }
+
+    public class CurrencyDto
+    {
+        public string CurrencyName { get; set; } = null!;
+        public decimal ConversionRate { get; set; }
+    }
+
+    public class EmployeeDto
+    {
+        public long EmployeeID { get; set; }
+        public string EmployeeName { get; set; } = null!;
+    }
+
+    public class StockDto
+    {
+        public decimal Quantity { get; set; }
+    }
+
+    public class StockDamageLineDto
+    {
+        public long GodownAutoSlNo { get; set; }
+        public long SubItemAutoSlNo { get; set; }
+        public string BatchNo { get; set; } = "NA";
+        public string Currency { get; set; } = "BDT";
+        public decimal Quantity { get; set; }
+        public decimal Rate { get; set; }
+        public decimal AmountIn { get; set; }
+        public decimal ExchangeRate { get; set; }
+        public decimal AmountBDT { get; set; }
+    }
+
+    public class StockDamageSaveRequest
+    {
+        public DateTime Date { get; set; }
+        public long? EmployeeID { get; set; }
+        public string? Comments { get; set; }
+        public List<StockDamageLineDto> Lines { get; set; } = new();
+    }
+}
