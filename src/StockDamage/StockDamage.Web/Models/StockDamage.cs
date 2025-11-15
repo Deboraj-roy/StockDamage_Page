@@ -10,7 +10,8 @@ namespace StockDamage.Web.Models
         public long GodownAutoSlNo { get; set; }
         public long SubItemAutoSlNo { get; set; }
         public string BatchNo { get; set; } = "N/A";
-        public string CurrencyName { get; set; } = null!;
+        //public string CurrencyName { get; set; } = null!;
+        public long CurrencyId { get; set; }
         public decimal Quantity { get; set; }
         public decimal Rate { get; set; }
         public decimal AmountIn { get; set; }
