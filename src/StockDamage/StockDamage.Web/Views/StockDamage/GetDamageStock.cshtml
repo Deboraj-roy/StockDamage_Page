@@ -1,117 +1,67 @@
 ﻿@using StockDamage.Web.Models.DTO
 @model IEnumerable<StockDamageViewDto>
-@using System.Globalization 
 
 @{
     ViewData["Title"] = "Stock Damage List";
-    // Group by VoucherNo and sort newest first
-    var groupedData = Model
-        .GroupBy(x => x.VoucherNo)
-        .OrderByDescending(g => g.Max(x => x.EntryDate));
-        
-    decimal grandTotalBDT = Model.Sum(x => x.AmountBDT);
 }
 
-<div class="container-fluid py-4">
-    <h2 class="mb-4">
-        <i class="bi bi-exclamation-triangle-fill text-danger"></i>
-        Stock Damage List
-        <small class="text-muted">(as of @DateTime.Now:yyyy-MM-dd HH:mm)</small>
-    </h2>
+<div class="container mt-4">
 
-    @if (!Model.Any())
-    {
-        <div class="alert alert-info">No damage records found.</div>
-    }
-    else
-    {
-        <div class="accordion" id="damageAccordion">
-            @foreach (var group in groupedData)
+    <h3 class="mb-3 fw-bold">📦 Stock Damage Records</h3>
+
+    <!-- Search box -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input id="searchBox" type="text" class="form-control" placeholder="Search... (Item, Voucher, Warehouse)">
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover table-striped" id="damageTable">
+        <thead class="table-dark">
+            <tr>
+                <th>Voucher</th>
+                <th>Date</th>
+                <th>Warehouse</th>
+                <th>Item</th>
+                <th>Code</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Amount (BDT)</th>
+                <th>Employee</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var x in Model)
             {
-                var voucher = group.Key;
-                var first = group.First();   // safe because EntryDate, Employee, Comments are same within voucher
-                var voucherTotal = group.Sum(x => x.AmountBDT);
-
-                <div class="accordion-item">
-                    <h2 class="accordion-header" id="heading-@voucher">
-                        <button class="accordion-button collapsed fw-bold" type="button" data-bs-toggle="collapse"
-                                data-bs-target="#collapse-@voucher">
-                            Voucher: @voucher 
-                            <span class="ms-3 text-primary">Date: @first.EntryDate:yyyy-MM-dd</span>
-                            <span class="ms-3">Employee: @first.EmployeeName</span>
-                            <span class="ms-auto text-danger fw-bold">
-                                Total Damage: @voucherTotal.ToString("N2") BDT
-                            </span>
-                        </button>
-                    </h2>
-                    <div id="collapse-@voucher" class="accordion-collapse collapse"
-                         data-bs-parent="#damageAccordion">
-                        <div class="accordion-body p-0">
-                            @if (!string.IsNullOrWhiteSpace(first.Comments))
-                            {
-                                <div class="alert alert-secondary mb-2">
-                                    <strong>Comments:</strong> @first.Comments
-                                </div>
-                            }
-
-                            <div class="table-responsive">
-                                <table class="table table-sm table-hover mb-0">
-                                    <thead class="table-light">
-                                        <tr>
-                                            <th>#</th>
-                                            <th>Godown</th>
-                                            <th>Item Code</th>
-                                            <th>Item Name</th>
-                                            <th>Batch</th>
-                                            <th>Qty</th>
-                                            <th>Unit</th>
-                                            <th>Rate</th>
-                                            <th>Currency</th>
-                                            <th>Amount</th>
-                                            <th>Ex.Rate</th>
-                                            <th class="text-end">Amount BDT</th>
-                                        </tr>
-                                    </thead>
-                                    <tbody>
-                                        @foreach (var item in group.OrderBy(x => x.GodownName).ThenBy(x => x.SubItemName))
-                                        {
-                                            <tr>
-                                                <td>@item.AutoSlNo</td>
-                                                <td>@item.GodownName</td>
-                                                <td>@item.SubItemCodeValue</td>
-                                                <td>@item.SubItemName</td>
-                                                <td>@(item.BatchNo == "NA" ? "-" : item.BatchNo)</td>
-                                                <td class="text-end">@item.Quantity.ToString("N2")</td>
-                                                <td>@item.Unit</td>
-                                                <td class="text-end">@item.Rate.ToString("N2")</td>
-                                                <td>@item.CurrencyName</td>
-                                                <td class="text-end">@item.AmountIn.ToString("N2")</td>
-                                                <td class="text-end">@item.ExchangeRate.ToString("N4")</td>
-                                                <td class="text-end fw-bold">@item.AmountBDT.ToString("N2")</td>
-                                            </tr>
-                                        }
-                                        <tr class="table-danger">
-                                            <td colspan="11" class="text-end fw-bold">Voucher Total :</td>
-                                            <td class="text-end fw-bold">@voucherTotal.ToString("N2") BDT</td>
-                                        </tr>
-                                    </tbody>
-                                </table>
-                            </div>
-                        </div>
-                    </div>
-                </div>
+                <tr>
+                    <td>@x.VoucherNo</td>
+                    <td>@x.EntryDate.ToString("yyyy-MM-dd")</td>
+                    <td>@x.GodownName</td>
+                    <td>@x.SubItemName</td>
+                    <td>@x.SubItemCodeValue</td>
+                    <td class="text-end">@x.Quantity</td>
+                    <td class="text-end">@x.Rate.ToString("0.00")</td>
+                    <td class="text-end">@x.AmountBDT.ToString("0.00")</td>
+                    <td>@x.EmployeeName</td>
+                    <td>@x.Comments</td>
+                </tr>
             }
-        </div>
+        </tbody>
 
-        <div class="mt-4 p-3 bg-dark text-white rounded">
-            <h4 class="mb-0 text-end">
-                Grand Total Damage : @grandTotalBDT.ToString("N2") BDT
-            </h4>
-        </div>
-    }
+    </table>
+
 </div>
 
-@section Scripts {
-    <!-- If your project doesn't already include Bootstrap JS, add it -->
-    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.3/dist/js/bootstrap.bundle.min.js"></script>
-}
+<!-- jQuery Search Script -->
+<script>
+    $(document).ready(function () {
+        $("#searchBox").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#damageTable tbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>

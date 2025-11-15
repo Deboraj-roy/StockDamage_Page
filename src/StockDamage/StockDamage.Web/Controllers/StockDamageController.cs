@@ -48,23 +48,6 @@ namespace StockDamage.Web.Controllers
 
             return Json(new { CurrencyName = item.CurrencyName, CurrencyId = item.CurrencyId, ConversionRate = item.ConversionRate });
         }
-        //[HttpPost]
-        //public async Task<IActionResult> Save([FromBody] StockDamageSaveRequest req)
-        //{
-        //    // basic validation
-        //    if (req == null || req.Lines == null || !req.Lines.Any()) return Json(new { success = false, message = "No lines provided" });
-
-        //    // generate voucher if not provided
-        //    if (string.IsNullOrWhiteSpace(req.VoucherNo))
-        //    {
-        //        req.VoucherNo = "SD-" + DateTime.UtcNow.ToString("yyyyMMddHHmmss");
-        //    }
-        //    req.TotalAmountBDT = req.Lines.Sum(x => x.AmountBDT);
-
-        //    var result = await _stockDamageService.SaveStockDamageAsync(req);
-        //    if (result.Success) return Json(new { success = true, voucherNo = result.VoucherNo, id = result.Id });
-        //    return Json(new { success = false, message = result.Message ?? "Save failed" });
-        //}
 
         [HttpPost]
         public async Task<IActionResult> Save([FromBody] StockDamageSaveRequest request)
