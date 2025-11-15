@@ -39,7 +39,7 @@ namespace StockDamage.Web.Migrations
 
                     b.HasKey("CurrencyId");
 
-                    b.ToTable("Currencie");
+                    b.ToTable("Currencies", (string)null);
                 });
 
             modelBuilder.Entity("StockDamage.Web.Models.Employee", b =>
@@ -56,7 +56,7 @@ namespace StockDamage.Web.Migrations
 
                     b.HasKey("EmployeeID");
 
-                    b.ToTable("Employee");
+                    b.ToTable("Employees", (string)null);
                 });
 
             modelBuilder.Entity("StockDamage.Web.Models.Godown", b =>
@@ -80,7 +80,7 @@ namespace StockDamage.Web.Migrations
 
                     b.HasKey("AutoSlNo");
 
-                    b.ToTable("Godown");
+                    b.ToTable("Godowns", (string)null);
                 });
 
             modelBuilder.Entity("StockDamage.Web.Models.Stock", b =>
@@ -105,10 +105,10 @@ namespace StockDamage.Web.Migrations
 
                     b.HasKey("AutoSlNo");
 
-                    b.ToTable("Stock");
+                    b.ToTable("Stocks", (string)null);
                 });
 
-            modelBuilder.Entity("StockDamage.Web.Models.StockDamage", b =>
+            modelBuilder.Entity("StockDamage.Web.Models.StockDamageLine", b =>
                 {
                     b.Property<long>("AutoSlNo")
                         .ValueGeneratedOnAdd()
@@ -166,7 +166,7 @@ namespace StockDamage.Web.Migrations
 
                     b.HasKey("AutoSlNo");
 
-                    b.ToTable("StockDamage");
+                    b.ToTable("StockDamageLines", (string)null);
                 });
 
             modelBuilder.Entity("StockDamage.Web.Models.StockDamageVoucher", b =>
@@ -195,7 +195,7 @@ namespace StockDamage.Web.Migrations
 
                     b.HasKey("VoucherNo");
 
-                    b.ToTable("StockDamageVoucher");
+                    b.ToTable("StockDamageVouchers", (string)null);
                 });
 
             modelBuilder.Entity("StockDamage.Web.Models.SubItemCode", b =>
@@ -226,7 +226,7 @@ namespace StockDamage.Web.Migrations
 
                     b.HasKey("AutoSlNo");
 
-                    b.ToTable("SubItemCode");
+                    b.ToTable("SubItemCodes", (string)null);
                 });
 #pragma warning restore 612, 618
         }
