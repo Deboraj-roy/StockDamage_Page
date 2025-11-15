@@ -12,7 +12,7 @@ namespace StockDamage.Web.Service.IService
         Task<List<Stock>> GetStockAsync(Expression<Func<Stock, bool>> whereCondition);
         Task<List<Currency>> GetCurrenciesAsync(Expression<Func<Currency, bool>> whereCondition);
         Task<List<Employee>> GetEmployeesAsync(Expression<Func<Employee, bool>> whereCondition);
-        Task<List<StockDamageLine>> GetStockDamageLineAsync(Expression<Func<StockDamageLine, bool>> whereCondition);
+        Task<List<StockDamage.Web.Models.StockDamage>> GetStockDamageLineAsync(Expression<Func<StockDamage.Web.Models.StockDamage, bool>> whereCondition);
         Task<List<StockDamageVoucher>> GetStockDamageVoucherAsync(Expression<Func<StockDamageVoucher, bool>> whereCondition);
          
         /// <summary>

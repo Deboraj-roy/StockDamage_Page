@@ -1,7 +1,7 @@
 ﻿using System.ComponentModel.DataAnnotations;
 namespace StockDamage.Web.Models
 {
-    public class StockDamageLine
+    public class StockDamage
     {
         [Key]
         public long AutoSlNo { get; set; }

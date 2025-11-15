@@ -25,7 +25,7 @@ namespace StockDamage.Web.Service
             var result = new List<Godown>();
             try
             {
-                result = await _context.Godowns
+                result = await _context.Godown
                                        .AsNoTracking()
                                        .Where(whereCondition).ToListAsync();
                 return result;
@@ -41,7 +41,7 @@ namespace StockDamage.Web.Service
             var result = new List<SubItemCode>();
             try
             {
-                result = await _context.SubItemCodes
+                result = await _context.SubItemCode
                                        .AsNoTracking()
                                        .Where(whereCondition).ToListAsync();
                 return result;
@@ -57,7 +57,7 @@ namespace StockDamage.Web.Service
             var result = new List<Stock>();
             try
             {
-                result = await _context.Stocks
+                result = await _context.Stock
                                        .AsNoTracking()
                                        .Where(whereCondition).ToListAsync();
                 return result;
@@ -73,7 +73,7 @@ namespace StockDamage.Web.Service
             var result = new List<Currency>();
             try
             {
-                result = await _context.Currencies
+                result = await _context.Currencie
                                        .AsNoTracking()
                                        .Where(whereCondition).ToListAsync();
                 return result;
@@ -89,7 +89,7 @@ namespace StockDamage.Web.Service
             var result = new List<Employee>();
             try
             {
-                result = await _context.Employees
+                result = await _context.Employee
                                        .AsNoTracking()
                                        .Where(whereCondition).ToListAsync();
                 return result;
@@ -100,12 +100,12 @@ namespace StockDamage.Web.Service
             }
         }
 
-        public async Task<List<StockDamageLine>> GetStockDamageLineAsync(Expression<Func<StockDamageLine, bool>> whereCondition)
+        public async Task<List<StockDamage.Web.Models.StockDamage>> GetStockDamageLineAsync(Expression<Func<StockDamage.Web.Models.StockDamage, bool>> whereCondition)
         {
-            var result = new List<StockDamageLine>();
+            var result = new List<StockDamage.Web.Models.StockDamage>();
             try
             {
-                result = await _context.StockDamageLines
+                result = await _context.StockDamage
                                        .AsNoTracking()
                                        .Where(whereCondition).ToListAsync();
                 return result;
@@ -120,7 +120,7 @@ namespace StockDamage.Web.Service
             var result = new List<StockDamageVoucher>();
             try
             {
-                result = await _context.StockDamageVouchers
+                result = await _context.StockDamageVoucher
                                        .AsNoTracking()
                                        .Where(whereCondition).ToListAsync();
                 return result;

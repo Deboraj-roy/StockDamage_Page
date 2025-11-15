@@ -15,7 +15,7 @@ namespace StockDamage.Web.Data
         public DbSet<Stock> Stock { get; set; } = null!;
         public DbSet<Currency> Currencie { get; set; } = null!;
         public DbSet<Employee> Employee { get; set; } = null!;
-        public DbSet<StockDamageLine> StockDamageLine { get; set; } = null!; // optional direct mapping
+        public DbSet<StockDamage.Web.Models.StockDamage> StockDamage { get; set; } = null!; // optional direct mapping
         public DbSet<StockDamageVoucher> StockDamageVoucher { get; set; } = null!;
 
 
