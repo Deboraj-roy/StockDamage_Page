@@ -71,6 +71,7 @@ namespace StockDamage.Web.Controllers
         {
             try
             {
+                //var voucher = await _stockDamageService.SaveStockDamageAsync2(request);
                 var voucher = await _stockDamageService.SaveStockDamageAsync(request);
                 return Ok(new { success = true, voucherNo = voucher });
             }

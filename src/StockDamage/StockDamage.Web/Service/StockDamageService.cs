@@ -140,9 +140,9 @@ namespace StockDamage.Web.Service
         }
 
 
-        public async Task<string> SaveStockDamageAsync2(StockDamageSaveRequest request, CancellationToken cancellationToken = default)
+        public async Task<string> SaveStockDamageAsync2(StockDamageSaveRequest request)
         {
-            using var trx = await _context.Database.BeginTransactionAsync(cancellationToken);
+            using var trx = await _context.Database.BeginTransactionAsync();
 
             try
             {
@@ -175,7 +175,7 @@ namespace StockDamage.Web.Service
                     _context.StockDamage.Add(line);
                 }
 
-                await _context.SaveChangesAsync(cancellationToken);
+                await _context.SaveChangesAsync();
 
                 await trx.CommitAsync();
 
@@ -188,7 +188,7 @@ namespace StockDamage.Web.Service
             }
         }
         
-        public async Task<int> SaveStockDamageAsync(StockDamageSaveRequest request, CancellationToken cancellationToken = default)
+        public async Task<string> SaveStockDamageAsync(StockDamageSaveRequest request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
             if (request.Lines == null || !request.Lines.Any()) throw new ArgumentException("No lines to save", nameof(request));
@@ -196,28 +196,29 @@ namespace StockDamage.Web.Service
             var conn = _context.Database.GetDbConnection();
             await using (conn)
             {
-                await conn.OpenAsync(cancellationToken);
+                await conn.OpenAsync();
 
-                using var transaction = await conn.BeginTransactionAsync(cancellationToken);
+                using var transaction = await conn.BeginTransactionAsync();
 
                 try
                 {
-                    int voucherNo = 0;
+                    var voucherNo = GenerateVoucher();
                     foreach (var line in request.Lines)
                     {
                         // Prepare parameters
-                        var pVoucherNo = new SqlParameter("@VoucherNo", System.Data.SqlDbType.Int) { Direction = System.Data.ParameterDirection.InputOutput, Value = voucherNo };
+                        //var pVoucherNo = new SqlParameter("@VoucherNo", voucherNo) { Direction = System.Data.ParameterDirection.InputOutput, Value = voucherNo };
                         var cmd = conn.CreateCommand();
                         cmd.Transaction = transaction;
                         cmd.CommandText = "dbo.SP_StockDamage_Save";
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
-                        cmd.Parameters.Add(pVoucherNo);
+                        //cmd.Parameters.Add(pVoucherNo);
+                        cmd.Parameters.Add(new SqlParameter("@VoucherNo", voucherNo));
                         cmd.Parameters.Add(new SqlParameter("@EntryDate", request.Date));
                         cmd.Parameters.Add(new SqlParameter("@GodownAutoSlNo", line.GodownAutoSlNo));
                         cmd.Parameters.Add(new SqlParameter("@SubItemAutoSlNo", line.SubItemAutoSlNo));
                         cmd.Parameters.Add(new SqlParameter("@BatchNo", line.BatchNo ?? "NA"));
-                        cmd.Parameters.Add(new SqlParameter("@CurrencyName", line.Currency));
+                        cmd.Parameters.Add(new SqlParameter("@Currency", line.Currency));
                         cmd.Parameters.Add(new SqlParameter("@Quantity", line.Quantity));
                         cmd.Parameters.Add(new SqlParameter("@Rate", line.Rate));
                         cmd.Parameters.Add(new SqlParameter("@AmountIn", line.AmountIn));
@@ -228,76 +229,22 @@ namespace StockDamage.Web.Service
                         cmd.Parameters.Add(new SqlParameter("@Comments", (object?)request.Comments ?? DBNull.Value));
 
                         // Execute stored procedure
-                        await cmd.ExecuteNonQueryAsync(cancellationToken);
+                        await cmd.ExecuteNonQueryAsync();
 
                         // read output voucher number
-                        voucherNo = Convert.ToInt32(pVoucherNo.Value);
+                        //voucherNo = Convert.ToInt32(pVoucherNo.Value);
                     }
 
-                    await transaction.CommitAsync(cancellationToken);
+                    await transaction.CommitAsync();
                     return voucherNo;
                 }
                 catch
                 {
-                    try { await transaction.RollbackAsync(cancellationToken); } catch { }
+                    try { await transaction.RollbackAsync(); } catch { }
                     throw;
                 }
             }
         }
-
-
-        //public async Task<long> SaveStockDamageAsync(StockDamageSaveRequest request)
-        //{
-        //    using var conn = _context.Database.GetDbConnection();
-        //    //using var conn = new SqlConnection(_context.Database.OpenConnection);
-        //    await conn.OpenAsync();
-
-        //    // Build DataTable for TVP
-        //    var dtLines = new DataTable();
-        //    dtLines.Columns.Add("GodownAutoSlNo", typeof(long));
-        //    dtLines.Columns.Add("SubItemAutoSlNo", typeof(long));
-        //    dtLines.Columns.Add("BatchNo", typeof(string));
-        //    dtLines.Columns.Add("CurrencyId", typeof(long));
-        //    dtLines.Columns.Add("Quantity", typeof(decimal));
-        //    dtLines.Columns.Add("Rate", typeof(decimal));
-        //    dtLines.Columns.Add("AmountIn", typeof(decimal));
-        //    dtLines.Columns.Add("ExchangeRate", typeof(decimal));
-        //    dtLines.Columns.Add("AmountBDT", typeof(decimal));
-
-        //    foreach (var l in request.Lines)
-        //    {
-        //        dtLines.Rows.Add(
-        //            l.GodownAutoSlNo,
-        //            l.SubItemAutoSlNo,
-        //            l.BatchNo,
-        //            l.Currency,
-        //            l.Quantity,
-        //            l.Rate,
-        //            l.AmountIn,
-        //            l.ExchangeRate,
-        //            l.AmountBDT
-        //        );
-        //    }
-
-        //    // Prepare parameters
-        //    var p = new DynamicParameters();
-        //    p.Add("@Date", request.Date);
-        //    p.Add("@EmployeeID", request.EmployeeID);
-        //    p.Add("@Comments", request.Comments);
-        //    p.Add("@Lines", dtLines.AsTableValuedParameter("dbo.StockDamageLineType"));
-        //    p.Add("@VoucherNo", dbType: DbType.Int64, direction: ParameterDirection.Output);
-
-        //    // Execute SP
-        //    await conn.ExecuteAsync(
-        //        "dbo.SP_StockDamage_Save",
-        //        p,
-        //        commandType: CommandType.StoredProcedure
-        //    );
-
-        //    // return voucher
-        //    return p.Get<long>("@VoucherNo");
-        //}
-
 
     }
 }
