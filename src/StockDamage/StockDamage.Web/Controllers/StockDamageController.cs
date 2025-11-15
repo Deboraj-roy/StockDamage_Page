@@ -24,16 +24,16 @@ namespace StockDamage.Web.Controllers
 
             return View();
         }
-
-        [HttpGet]
+         
         public async Task<IActionResult> GetItemDetails(long itemId)
         {
             var item = (await _stockDamageService.GetSubItemCodeAsync(s => s.AutoSlNo == itemId)).FirstOrDefault();
-            if (item == null) return Json(null);
-            return Json(new { SubItemCode = item.SubItemCodeValue, Unit = item.Unit });
-        }
+            if (item == null) return Json(new { SubItemCode = "", Unit = 0, stockId = 0, stockqty = 0 });
 
-        [HttpGet]
+            var stock = (await _stockDamageService.GetStockAsync(s => s.SubItemAutoSlNo == itemId)).FirstOrDefault();
+            return Json(new { SubItemCode = item.SubItemCodeValue, Unit = item.Unit , stockId = stock.AutoSlNo, stockqty = stock.Quantity });
+        }
+         
         public async Task<IActionResult> GetStock(long warehouseId, long itemId)
         {
             var s = await _stockDamageService.GetStockAsync(st => st.GodownAutoSlNo == warehouseId && st.SubItemAutoSlNo == itemId);
@@ -41,7 +41,13 @@ namespace StockDamage.Web.Controllers
             if (s2 == null) return Json(new { Quantity = 0m });
             return Json(s2);
         }
+        public async Task<IActionResult> GetCurrencyDetails(long cId)
+        {
+            var item = (await _stockDamageService.GetCurrenciesAsync(s => s.CurrencyId == cId)).FirstOrDefault();
+            if (item == null) return Json(new { CurrencyName = "", CurrencyId = 0, ConversionRate = 0 });
 
+            return Json(new { CurrencyName = item.CurrencyName, CurrencyId = item.CurrencyId, ConversionRate = item.ConversionRate });
+        }
         //[HttpPost]
         //public async Task<IActionResult> Save([FromBody] StockDamageSaveRequest req)
         //{

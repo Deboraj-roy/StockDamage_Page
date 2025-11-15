@@ -1,105 +1,200 @@
-﻿
-<!doctype html>
+﻿<!doctype html>
 <html>
 <head>
     <meta charset="utf-8" />
     <title>Stock Damage</title>
     <meta name="viewport" content="width=device-width,initial-scale=1" />
+
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+
     <style>
-        .readonly { background:#e9ecef; }
-        .unit-box { width:90px; display:inline-block; margin-left:8px; }
+        body {
+            background: #f9fafb;
+        }
+
+        .readonly {
+            background: #e9ecef !important;
+        }
+
+        .section-title {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: .75rem;
+            border-left: 4px solid #0d6efd;
+            padding-left: 8px;
+        }
+
+        .form-label {
+            font-weight: 500;
+        }
+
+        .card {
+            border-radius: 10px;
+        }
+
+        .table th {
+            background: #f1f3f5;
+        }
     </style>
 </head>
+
 <body class="p-4">
     <div class="container">
-        <h3>Stock Damage</h3>
+
+        <div class="mb-4">
+            <h2 class="fw-bold text-primary">Stock Damage Entry</h2>
+            <small class="text-muted">Record damaged stock with proper valuation</small>
+        </div>
+
         <form id="formDamage" onsubmit="return false;">
-            <div class="row">
-                <!-- Left -->
+
+            <div class="row g-4">
+
+                <!-- LEFT SIDE -->
                 <div class="col-md-6">
-                    <div class="card p-3 mb-3">
-                        <label>Date</label>
-                        <input type="date" id="txtDate" class="form-control mb-2" />
+                    <div class="card shadow-sm p-4">
 
-                        <label>Voucher No</label>
-                        <input type="text" id="txtVoucherNo" class="form-control mb-2 readonly" />
+                        <div class="section-title">Item & Warehouse Info</div>
 
-                        <label for="ddlWarehouse">Warehouse Name *</label>
-                        @Html.DropDownList("ddlWarehouse", (IEnumerable<SelectListItem>)ViewBag.ddlGodowns, "Select Warehouse", new { @class = "form-select mb-2", id = "ddlWarehouse" })
+                        <div class="mb-3">
+                            <label class="form-label">Date</label>
+                            <input type="date" id="txtDate" class="form-control" />
+                        </div>
 
+                        <div class="mb-3">
+                            <label class="form-label">Voucher No</label>
+                            <input type="text" id="txtVoucherNo" class="form-control readonly" />
+                        </div>
 
-                        <label for="ddlSubItemNames">Item Name *</label>
-                        @* <select id="ddlItem" class="form-select mb-2"></select> *@
-                        @Html.DropDownList("ddlSubItemNames", (IEnumerable<SelectListItem>)ViewBag.ddlSubItemNames, "Select Item", new { @class = "form-select mb-2", id = "ddlSubItemNames" })
+                        <div class="mb-3">
+                            <label class="form-label">Warehouse *</label>
+                            @Html.DropDownList("ddlWarehouse", (IEnumerable<SelectListItem>)ViewBag.ddlGodowns,
+                            "Select Warehouse",
+                                                        new { @class = "form-select", id = "ddlWarehouse" })
+                        </div>
 
-                        <div class="mb-2 d-flex align-items-center">
-                            <div style="flex:1">
-                                <label>Item Code</label>
+                        <div class="mb-3">
+                            <label class="form-label">Item Name*</label>
+                            @Html.DropDownList("ddlSubItemNames", (IEnumerable<SelectListItem>)ViewBag.ddlSubItemNames,
+                                                        "Select Item",
+                                                        new { @class = "form-select", id = "ddlSubItemNames" })
+                        </div>
+
+                        <div class="row mb-3">
+                            <div class="col-8">
+                                <label class="form-label">Item Code</label>
                                 <input id="txtItemCode" class="form-control readonly" readonly />
                             </div>
-                            <div class="unit-box">
-                                <label>Unit</label>
+                            <div class="col-4">
+                                <label class="form-label">Unit</label>
                                 <input id="txtUnit" class="form-control readonly" readonly />
                             </div>
                         </div>
 
-                        <label>Stock</label>
-                        <input id="txtStock" class="form-control readonly mb-2" readonly />
+                        
+                        <div class="row mb-3">
+                            <div class="col-5">
+                                <label class="form-label">Stock ID</label>
+                                <input id="txtStockId" class="form-control readonly" readonly />
+                            </div>
+                            <div class="col-5">
+                                <label class="form-label">Available Stock</label>
+                                <input id="txtStock" class="form-control readonly" readonly />
+                            </div>
 
-                        <label>Batch No</label>
-                        @* <input id="txtBatch" class="form-control readonly mb-2" value="NA"/> *@
-                        <select id="txtBatch" class="form-control form-control-sm select2">
-                            <option value="NA">NA</option>
-                            <option value="B001">B001</option>
-                            <option value="B002">B002</option>
-                            <option value="B003">B003</option>
-                        </select>
+                        </div>
+                         
 
-                        <div class="text-end">
-                            <button id="btnAdd" class="btn btn-primary">Add</button>
+                        <div class="mb-3">
+                            <label class="form-label">Batch No</label>
+                            <select id="txtBatch" class="form-select">
+                                <option value="NA">NA</option>
+                                <option value="B001">B001</option>
+                                <option value="B002">B002</option>
+                                <option value="B003">B003</option>
+                            </select>
+                        </div>
+
+                        <div class="text-end mt-3">
+                            <button id="btnAdd" class="btn btn-primary px-4">Add Item</button>
                         </div>
                     </div>
                 </div>
 
-                <!-- Right -->
+                <!-- RIGHT SIDE -->
                 <div class="col-md-6">
-                    <div class="card p-3 mb-3">
-                        <label>Currency</label>
-                        <select id="ddlCurrency" class="form-select mb-2"></select>
+                    <div class="card shadow-sm p-4">
 
-                        <label>Quantity</label>
-                        <input type="number" step="0.0001" id="txtQuantity" class="form-control mb-2" />
+                        <div class="section-title">Value & Currency</div>
 
-                        <label>Rate</label>
-                        <input type="number" step="0.0001" id="txtRate" class="form-control mb-2" />
+                        <div class="mb-3">
+                            <label class="form-label">Currency</label>
+                            @Html.DropDownList("ddlCurrency", (IEnumerable<SelectListItem>)ViewBag.ddlCurrency,
+                                                        "Select Currency",
+                                                        new { @class = "form-select", id = "ddlCurrency" })
+                        </div>
 
-                        <label>Amount In</label>
-                        <input id="txtAmountIn" class="form-control readonly mb-2" readonly />
+                        <div class="row mb-3">
+                            <div class="col-6">
+                                <label class="form-label">Quantity</label>
+                                <input type="number" step="0.0001" id="txtQuantity" class="form-control" />
+                            </div>
+                            <div class="col-6">
+                                <label class="form-label">Rate</label>
+                                <input type="number" step="0.0001" id="txtRate" class="form-control" />
+                            </div>
+                        </div>
 
-                        <label>Exchange Rate (in BDT)</label>
-                        <input id="txtExchangeRate" class="form-control readonly mb-2" readonly />
+                        <div class="mb-3">
+                            <label class="form-label">Amount In</label>
+                            <input id="txtAmountIn" class="form-control readonly" readonly />
+                        </div>
 
-                        <label>Total Amount (BDT)</label>
-                        <input id="txtTotalBDT" class="form-control readonly mb-2" readonly />
+                        <div class="mb-3">
+                            <label class="form-label">Exchange Rate (BDT)</label>
+                            <input id="txtExchangeRate" class="form-control readonly" readonly />
+                        </div>
 
-                        <label>Dr A/C Head</label>
-                        <input id="txtDrAC" class="form-control readonly mb-2" readonly value="Stock Damage" />
+                        <div class="mb-3">
+                            <label class="form-label">Total Amount (BDT)</label>
+                            <input id="txtTotalBDT" class="form-control readonly" readonly />
+                        </div>
 
-                        <label>Employee Name</label>
-                        <select id="ddlEmployee" class="form-select mb-2"></select>
+                        <div class="mb-3">
+                            <label class="form-label">Dr A/C Head</label>
+                            @* <input id="txtDrAC" class="form-control readonly" value="Stock Damage" /> *@
+                            <select id="txtDrAC" class="form-select">
+                                <option value="Stock Damage">Stock Damage</option>
+                                <option value="Stock New">Stock New</option>
+                                <option value="Stock Old">Stock Old</option>
+                            </select>
+                        </div>
 
-                        <label>Comments</label>
-                        <textarea id="txtComments" class="form-control mb-2"></textarea>
+                        <div class="mb-3">
+                            <label class="form-label">Employee Name</label>
+                            @* <select id="ddlEmployee" class="form-select"></select> *@
+                            @Html.DropDownList("ddlEmployee", (IEnumerable<SelectListItem>)ViewBag.ddlEmployees,
+                                                        "Select Employee",
+                                                        new { @class = "form-select", id = "ddlEmployee" })
+                        </div>
+
+                        <div class="mb-3">
+                            <label class="form-label">Comments</label>
+                            <textarea id="txtComments" class="form-control"></textarea>
+                        </div>
+
                     </div>
                 </div>
+
             </div>
 
-            <!-- table -->
-            <div class="card p-3">
+            <!-- TABLE -->
+            <div class="card shadow-sm p-4 mt-4">
+                <h5 class="section-title">Damage Item List</h5>
+
                 <div class="table-responsive">
                     <table class="table table-bordered" id="tblLines">
-                        <thead>
+                        <thead class="table-light">
                             <tr>
                                 <th>SL</th>
                                 <th>Warehouse</th>
@@ -111,48 +206,99 @@
                                 <th>Rate</th>
                                 <th>Amount In</th>
                                 <th>Exch</th>
-                                <th>Total(BDT)</th>
-                                <th>Actions</th>
+                                <th>Total (BDT)</th>
+                                <th width="110">Actions</th>
                             </tr>
                         </thead>
                         <tbody id="tblBody"></tbody>
                     </table>
                 </div>
 
-                <div class="d-flex justify-content-between">
-                    <div></div>
-                    <div class="mt-2">
-                        <strong>Grand Total:</strong> <span id="lblGrandTotal">0.00</span>
-                        <button id="btnSave" class="btn btn-success btn-lg ms-3">Save</button>
-                    </div>
+                <div class="d-flex justify-content-between mt-3">
+                    <h5 class="fw-bold">Grand Total: <span id="lblGrandTotal">0.00</span> BDT</h5>
+                    <button id="btnSave" class="btn btn-success btn-lg px-4">Save</button>
                 </div>
             </div>
+
         </form>
+
     </div>
 
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+
     <script>
 
-        var warehouses = []; 
+        var warehouses = [];
         var items = [];
-        var currencies = []; 
-        var employees = []; 
-        var lines = []; 
+        var currencies = [];
+        var employees = [];
+        var lines = [];
         var editIndex = -1;
         var ddlSubItemNames = $("#ddlSubItemNames");
-         
+        var txtUnit = $("#txtUnit");
+        var txtItemCode = $("#txtItemCode");
+        var txtStockId = $("#txtStockId");
+        var txtStock = $("#txtStock");
+        var ddlCurrency = $("#ddlCurrency");
+        var txtExchangeRate = $("#txtExchangeRate");
+        var txtAmountIn = $("#txtAmountIn");
+        var txtTotalBDT = $("#txtTotalBDT");
+        var txtBatch = $("#txtBatch");
+        var txtDrAC = $("#txtDrAC");
+        var exchangeRate = 1;
 
-        ddlSubItemNames.change(function () { 
-            var data = { itemId: ddlSubItemNames.val() };
-            $.when(getReqWithData(JSON, type.post, '/StockDamage/GetItemDetails', data)).then(function (res, status) {
-                if (status === "success") {
-                    console.log(res);
+
+        $("#ddlSubItemNames").change(function () {
+
+            var itemId = $(this).val();
+            console.log(itemId);
+
+            $.ajax({
+                url: '/StockDamage/GetItemDetails',
+                    type: 'POST',
+                    data: { itemId: itemId },  
+                    success: function (res) {
+                        txtUnit.val(res.unit);
+                        txtItemCode.val(res.subItemCode);
+                        txtStockId.val(res.stockId);
+                        txtStock.val(res.stockqty);
+                        console.log(res);
+                    },
+                error: function (err) {
+                    console.error(err);
                 }
-            }).fail(function (error) {
-                consoleLog(error);
-            })
-           
+            });
+
+        });
+
+        $("#ddlCurrency").change(function () {
+
+            var cId = $(this).val();
+            console.log(cId);
+
+            $.ajax({
+                url: '/StockDamage/GetCurrencyDetails',
+                    type: 'POST',
+                    data: { cId: cId },
+                    success: function (res) {
+                        exchangeRate = res.conversionRate || 0;
+                        // var finalRate = exchangeRate * (txtAmountIn.val() || 0);
+                        debugger;
+                        txtExchangeRate.val(exchangeRate);
+                        console.log(res);
+                        console.log(txtExchangeRate.val());
+                    },
+                error: function (err) {
+                    console.error(err);
+                }
+            });
+
+        });
+
+
+        $("#txtAmountIn").change(function () {
+           recalc();
         });
 
         $(function () {
@@ -175,7 +321,7 @@
         }
 
         function fillWarehouses() {
-            var ddl = $('#ddlWarehouse'); 
+            var ddl = $('#ddlWarehouse');
             ddl.empty().append('<option value="">--Select--</option>');
             warehouses.forEach(w => ddl.append($('<option>').val(w.autoSlNo || w.AutoSlNo).text(w.godownName || w.GodownName)));
         }
@@ -216,18 +362,27 @@
         }
 
         function onCurrencyChange() {
-            const cur = $('#ddlCurrency').val();
-            const obj = currencies.find(c => (c.currencyName || c.CurrencyName) === cur);
+            var cur = $('#ddlCurrency').val();
+            var obj = currencies.find(c => (c.currencyName || c.CurrencyName) === cur);
             $('#txtExchangeRate').val(obj ? (obj.conversionRate || obj.ConversionRate).toFixed(4) : '');
             recalc();
         }
 
         function recalc() {
-            const qty = parseFloat($('#txtQuantity').val()) || 0;
-            const rate = parseFloat($('#txtRate').val()) || 0;
-            const amountIn = qty * rate;
+            var qty = parseFloat($('#txtQuantity').val()) || 0;
+            var rate = parseFloat($('#txtRate').val()) || 0;
+            var amountIn = qty * rate;
             $('#txtAmountIn').val(amountIn.toFixed(4));
-            const exch = parseFloat($('#txtExchangeRate').val()) || 0;
+            
+            
+            debugger;
+            var exch = parseFloat($('#txtExchangeRate').val()) || 0;
+            var bdExchangeRate = exch * amountIn;
+            $('#txtTotalBDT').val(bdExchangeRate.toFixed(4));
+
+            console.log(exch);
+
+
             $('#txtTotalBDT').val((amountIn * exch).toFixed(4));
         }
 
