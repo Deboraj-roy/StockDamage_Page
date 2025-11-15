@@ -8,5 +8,6 @@ namespace StockDamage.Web.Models
         public long GodownAutoSlNo { get; set; }
         public long SubItemAutoSlNo { get; set; }
         public decimal Quantity { get; set; }
+        public DateTime? EntryDate { get; set; }
     }
 }

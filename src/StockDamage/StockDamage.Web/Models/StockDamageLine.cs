@@ -19,5 +19,7 @@ namespace StockDamage.Web.Models
         public string DrACHead { get; set; } = "Stock Damage";
         public long? EmployeeID { get; set; }
         public string? Comments { get; set; }
+        public DateTime? CreateDate { get; set; }
+
     }
 }

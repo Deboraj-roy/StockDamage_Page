@@ -9,5 +9,6 @@ namespace StockDamage.Web.Models
         public string DrACHead { get; set; } = null!;
         public long? EmployeeID { get; set; }
         public string? Comments { get; set; }
+        public DateTime? EntryDate { get; set; }
     }
 }

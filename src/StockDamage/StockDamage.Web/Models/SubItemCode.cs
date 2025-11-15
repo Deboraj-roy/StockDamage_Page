@@ -9,5 +9,6 @@ namespace StockDamage.Web.Models
         public string SubItemName { get; set; } = null!;
         public string Unit { get; set; } = null!;
         public decimal? Weight { get; set; }
+        public DateTime? EntryDate { get; set; }
     }
 }
