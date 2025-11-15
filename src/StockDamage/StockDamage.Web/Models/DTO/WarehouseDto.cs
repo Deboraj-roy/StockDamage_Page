@@ -36,12 +36,15 @@
         public long GodownAutoSlNo { get; set; }
         public long SubItemAutoSlNo { get; set; }
         public string BatchNo { get; set; } = "NA";
-        public string Currency { get; set; } = "BDT";
+        public long Currency { get; set; } 
         public decimal Quantity { get; set; }
         public decimal Rate { get; set; }
         public decimal AmountIn { get; set; }
         public decimal ExchangeRate { get; set; }
         public decimal AmountBDT { get; set; }
+
+        public long AutoSlNo { get; set; }
+        public long StockDamageId { get; set; }
     }
 
     public class StockDamageSaveRequest
@@ -50,6 +53,10 @@
         public long? EmployeeID { get; set; }
         public string? Comments { get; set; }
         public List<StockDamageLineDto> Lines { get; set; } = new();
+
+        public long AutoSlNo { get; set; }   
+        public string VoucherNo { get; set; } = ""; 
+
     }
 
     public class StockDamage

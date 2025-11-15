@@ -20,6 +20,7 @@ namespace StockDamage.Web.Service.IService
         /// Returns generated voucher number.
         /// </summary>
         Task<long> SaveStockDamageAsync(StockDamageSaveRequest request, CancellationToken cancellationToken = default);
+        Task<string> SaveStockDamageAsync2(StockDamageSaveRequest request, CancellationToken cancellationToken = default);
 
     }
 }

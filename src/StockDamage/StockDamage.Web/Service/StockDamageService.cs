@@ -1,12 +1,14 @@
-﻿using Microsoft.EntityFrameworkCore;
+﻿using Microsoft.Data.SqlClient;
+using Microsoft.EntityFrameworkCore;
 using StockDamage.Web.Data;
 using StockDamage.Web.Models;
 using StockDamage.Web.Models.DTO;
 using StockDamage.Web.Service.IService;
 using System.Collections.Generic;
+using System.Data;
 using System.Linq.Expressions;
 using System.Threading;
-using System.Threading.Tasks;
+using System.Threading.Tasks; 
 
 namespace StockDamage.Web.Service
 {
@@ -131,15 +133,171 @@ namespace StockDamage.Web.Service
         //    }
         //}
 
-        public Task<long> SaveStockDamageAsync(StockDamageSaveRequest request, CancellationToken cancellationToken = default)
-        {
-            throw new System.NotImplementedException();
-        }
 
         private string GenerateVoucher()
         {
             return "SD-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
         }
+
+
+        public async Task<string> SaveStockDamageAsync2(StockDamageSaveRequest request, CancellationToken cancellationToken = default)
+        {
+            using var trx = await _context.Database.BeginTransactionAsync(cancellationToken);
+
+            try
+            {
+                var voucherNo = GenerateVoucher();
+
+                // Save lines
+                foreach (var l in request.Lines)
+                {
+                    var line = new StockDamage.Web.Models.StockDamage
+                    {
+                        EntryDate = request.Date,
+                        EmployeeID = request.EmployeeID,
+                        Comments = request.Comments,
+                        VoucherNo = voucherNo,
+
+
+                        CreateDate = DateTime.UtcNow,
+                        //StockDamageId = header.AutoSlNo,
+                        GodownAutoSlNo = l.GodownAutoSlNo,
+                        SubItemAutoSlNo = l.SubItemAutoSlNo,
+                        BatchNo = l.BatchNo,
+                        CurrencyId = l.Currency,
+                        Quantity = l.Quantity,
+                        Rate = l.Rate,
+                        AmountIn = l.AmountIn,
+                        ExchangeRate = l.ExchangeRate,
+                        AmountBDT = l.AmountBDT
+                    };
+
+                    _context.StockDamage.Add(line);
+                }
+
+                await _context.SaveChangesAsync(cancellationToken);
+
+                await trx.CommitAsync();
+
+                return voucherNo; // OR return voucherNo if you prefer
+            }
+            catch
+            {
+                await trx.RollbackAsync();
+                throw;
+            }
+        }
+        
+        public async Task<int> SaveStockDamageAsync(StockDamageSaveRequest request, CancellationToken cancellationToken = default)
+        {
+            if (request == null) throw new ArgumentNullException(nameof(request));
+            if (request.Lines == null || !request.Lines.Any()) throw new ArgumentException("No lines to save", nameof(request));
+
+            var conn = _context.Database.GetDbConnection();
+            await using (conn)
+            {
+                await conn.OpenAsync(cancellationToken);
+
+                using var transaction = await conn.BeginTransactionAsync(cancellationToken);
+
+                try
+                {
+                    int voucherNo = 0;
+                    foreach (var line in request.Lines)
+                    {
+                        // Prepare parameters
+                        var pVoucherNo = new SqlParameter("@VoucherNo", System.Data.SqlDbType.Int) { Direction = System.Data.ParameterDirection.InputOutput, Value = voucherNo };
+                        var cmd = conn.CreateCommand();
+                        cmd.Transaction = transaction;
+                        cmd.CommandText = "dbo.SP_StockDamage_Save";
+                        cmd.CommandType = System.Data.CommandType.StoredProcedure;
+
+                        cmd.Parameters.Add(pVoucherNo);
+                        cmd.Parameters.Add(new SqlParameter("@EntryDate", request.Date));
+                        cmd.Parameters.Add(new SqlParameter("@GodownAutoSlNo", line.GodownAutoSlNo));
+                        cmd.Parameters.Add(new SqlParameter("@SubItemAutoSlNo", line.SubItemAutoSlNo));
+                        cmd.Parameters.Add(new SqlParameter("@BatchNo", line.BatchNo ?? "NA"));
+                        cmd.Parameters.Add(new SqlParameter("@CurrencyName", line.Currency));
+                        cmd.Parameters.Add(new SqlParameter("@Quantity", line.Quantity));
+                        cmd.Parameters.Add(new SqlParameter("@Rate", line.Rate));
+                        cmd.Parameters.Add(new SqlParameter("@AmountIn", line.AmountIn));
+                        cmd.Parameters.Add(new SqlParameter("@ExchangeRate", line.ExchangeRate));
+                        cmd.Parameters.Add(new SqlParameter("@AmountBDT", line.AmountBDT));
+                        cmd.Parameters.Add(new SqlParameter("@DrACHead", "Stock Damage"));
+                        cmd.Parameters.Add(new SqlParameter("@EmployeeID", (object?)request.EmployeeID ?? DBNull.Value));
+                        cmd.Parameters.Add(new SqlParameter("@Comments", (object?)request.Comments ?? DBNull.Value));
+
+                        // Execute stored procedure
+                        await cmd.ExecuteNonQueryAsync(cancellationToken);
+
+                        // read output voucher number
+                        voucherNo = Convert.ToInt32(pVoucherNo.Value);
+                    }
+
+                    await transaction.CommitAsync(cancellationToken);
+                    return voucherNo;
+                }
+                catch
+                {
+                    try { await transaction.RollbackAsync(cancellationToken); } catch { }
+                    throw;
+                }
+            }
+        }
+
+
+        //public async Task<long> SaveStockDamageAsync(StockDamageSaveRequest request)
+        //{
+        //    using var conn = _context.Database.GetDbConnection();
+        //    //using var conn = new SqlConnection(_context.Database.OpenConnection);
+        //    await conn.OpenAsync();
+
+        //    // Build DataTable for TVP
+        //    var dtLines = new DataTable();
+        //    dtLines.Columns.Add("GodownAutoSlNo", typeof(long));
+        //    dtLines.Columns.Add("SubItemAutoSlNo", typeof(long));
+        //    dtLines.Columns.Add("BatchNo", typeof(string));
+        //    dtLines.Columns.Add("CurrencyId", typeof(long));
+        //    dtLines.Columns.Add("Quantity", typeof(decimal));
+        //    dtLines.Columns.Add("Rate", typeof(decimal));
+        //    dtLines.Columns.Add("AmountIn", typeof(decimal));
+        //    dtLines.Columns.Add("ExchangeRate", typeof(decimal));
+        //    dtLines.Columns.Add("AmountBDT", typeof(decimal));
+
+        //    foreach (var l in request.Lines)
+        //    {
+        //        dtLines.Rows.Add(
+        //            l.GodownAutoSlNo,
+        //            l.SubItemAutoSlNo,
+        //            l.BatchNo,
+        //            l.Currency,
+        //            l.Quantity,
+        //            l.Rate,
+        //            l.AmountIn,
+        //            l.ExchangeRate,
+        //            l.AmountBDT
+        //        );
+        //    }
+
+        //    // Prepare parameters
+        //    var p = new DynamicParameters();
+        //    p.Add("@Date", request.Date);
+        //    p.Add("@EmployeeID", request.EmployeeID);
+        //    p.Add("@Comments", request.Comments);
+        //    p.Add("@Lines", dtLines.AsTableValuedParameter("dbo.StockDamageLineType"));
+        //    p.Add("@VoucherNo", dbType: DbType.Int64, direction: ParameterDirection.Output);
+
+        //    // Execute SP
+        //    await conn.ExecuteAsync(
+        //        "dbo.SP_StockDamage_Save",
+        //        p,
+        //        commandType: CommandType.StoredProcedure
+        //    );
+
+        //    // return voucher
+        //    return p.Get<long>("@VoucherNo");
+        //}
+
 
     }
 }
