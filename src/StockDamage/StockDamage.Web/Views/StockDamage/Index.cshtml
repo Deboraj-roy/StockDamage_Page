@@ -1,0 +1,340 @@
+﻿
+<!doctype html>
+<html>
+<head>
+    <meta charset="utf-8" />
+    <title>Stock Damage</title>
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <style>
+        .readonly { background:#e9ecef; }
+        .unit-box { width:90px; display:inline-block; margin-left:8px; }
+    </style>
+</head>
+<body class="p-4">
+    <div class="container">
+        <h3>Stock Damage</h3>
+        <form id="formDamage" onsubmit="return false;">
+            <div class="row">
+                <!-- Left -->
+                <div class="col-md-6">
+                    <div class="card p-3 mb-3">
+                        <label>Date</label>
+                        <input type="date" id="txtDate" class="form-control mb-2" />
+
+                        <label>Voucher No</label>
+                        <input type="text" id="txtVoucherNo" class="form-control mb-2 readonly" readonly />
+
+                        <label>Warehouse Name *</label>
+                        <select id="ddlWarehouse" class="form-select mb-2"></select>
+
+                        <label>Item Name *</label>
+                        <select id="ddlItem" class="form-select mb-2"></select>
+
+                        <div class="mb-2 d-flex align-items-center">
+                            <div style="flex:1">
+                                <label>Item Code</label>
+                                <input id="txtItemCode" class="form-control readonly" readonly />
+                            </div>
+                            <div class="unit-box">
+                                <label>Unit</label>
+                                <input id="txtUnit" class="form-control readonly" readonly />
+                            </div>
+                        </div>
+
+                        <label>Stock</label>
+                        <input id="txtStock" class="form-control readonly mb-2" readonly />
+
+                        <label>Batch No</label>
+                        <input id="txtBatch" class="form-control readonly mb-2" value="NA" readonly />
+
+                        <div class="text-end">
+                            <button id="btnAdd" class="btn btn-primary">Add</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Right -->
+                <div class="col-md-6">
+                    <div class="card p-3 mb-3">
+                        <label>Currency</label>
+                        <select id="ddlCurrency" class="form-select mb-2"></select>
+
+                        <label>Quantity</label>
+                        <input type="number" step="0.0001" id="txtQuantity" class="form-control mb-2" />
+
+                        <label>Rate</label>
+                        <input type="number" step="0.0001" id="txtRate" class="form-control mb-2" />
+
+                        <label>Amount In</label>
+                        <input id="txtAmountIn" class="form-control readonly mb-2" readonly />
+
+                        <label>Exchange Rate (in BDT)</label>
+                        <input id="txtExchangeRate" class="form-control readonly mb-2" readonly />
+
+                        <label>Total Amount (BDT)</label>
+                        <input id="txtTotalBDT" class="form-control readonly mb-2" readonly />
+
+                        <label>Dr A/C Head</label>
+                        <input id="txtDrAC" class="form-control readonly mb-2" readonly value="Stock Damage" />
+
+                        <label>Employee Name</label>
+                        <select id="ddlEmployee" class="form-select mb-2"></select>
+
+                        <label>Comments</label>
+                        <textarea id="txtComments" class="form-control mb-2"></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <!-- table -->
+            <div class="card p-3">
+                <div class="table-responsive">
+                    <table class="table table-bordered" id="tblLines">
+                        <thead>
+                            <tr>
+                                <th>SL</th>
+                                <th>Warehouse</th>
+                                <th>Item</th>
+                                <th>Code</th>
+                                <th>Batch</th>
+                                <th>Curr</th>
+                                <th>Qty</th>
+                                <th>Rate</th>
+                                <th>Amount In</th>
+                                <th>Exch</th>
+                                <th>Total(BDT)</th>
+                                <th>Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="tblBody"></tbody>
+                    </table>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <div></div>
+                    <div class="mt-2">
+                        <strong>Grand Total:</strong> <span id="lblGrandTotal">0.00</span>
+                        <button id="btnSave" class="btn btn-success btn-lg ms-3">Save</button>
+                    </div>
+                </div>
+            </div>
+        </form>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
+    <script>
+        let warehouses = [], items = [], currencies = [], employees = [], lines = [], editIndex = -1;
+
+        $(function () {
+            $('#txtDate').val(new Date().toISOString().slice(0,10));
+            loadAll();
+
+            $('#ddlItem').on('change', onItemChange);
+            $('#ddlWarehouse,#ddlItem').on('change', updateStock);
+            $('#ddlCurrency').on('change', onCurrencyChange);
+            $('#txtQuantity,#txtRate').on('input', recalc);
+            $('#btnAdd').on('click', onAdd);
+            $('#btnSave').on('click', onSave);
+        });
+
+        function loadAll() {
+            $.getJSON('/StockDamage/GetWarehouses').done(data => { warehouses = data; fillWarehouses(); });
+            $.getJSON('/StockDamage/GetItems').done(data => { items = data; fillItems(); });
+            $.getJSON('/StockDamage/GetCurrencies').done(data => { currencies = data; fillCurrencies(); });
+            $.getJSON('/StockDamage/GetEmployees').done(data => { employees = data; fillEmployees(); });
+        }
+
+        function fillWarehouses() {
+            let ddl = $('#ddlWarehouse'); ddl.empty().append('<option value="">--Select--</option>');
+            warehouses.forEach(w => ddl.append($('<option>').val(w.autoSlNo || w.AutoSlNo).text(w.godownName || w.GodownName)));
+        }
+
+        function fillItems() {
+            let ddl = $('#ddlItem'); ddl.empty().append('<option value="">--Select--</option>');
+            items.forEach(i => ddl.append($('<option>').val(i.autoSlNo || i.AutoSlNo).text(i.subItemName || i.SubItemName)));
+        }
+
+        function fillCurrencies() {
+            let ddl = $('#ddlCurrency'); ddl.empty();
+            currencies.forEach(c => ddl.append($('<option>').val(c.currencyName || c.CurrencyName).text(c.currencyName || c.CurrencyName)));
+            $('#ddlCurrency').val('BDT').trigger('change');
+        }
+
+        function fillEmployees() {
+            let ddl = $('#ddlEmployee'); ddl.empty().append('<option value="">--Select--</option>');
+            employees.forEach(e => ddl.append($('<option>').val(e.employeeID || e.EmployeeID).text(e.employeeName || e.EmployeeName)));
+        }
+
+        function onItemChange() {
+            const id = $('#ddlItem').val();
+            if (!id) { $('#txtItemCode,#txtUnit').val(''); return; }
+            $.getJSON('/StockDamage/GetItemDetails', { itemId: id }).done(item => {
+                $('#txtItemCode').val(item.subItemCode || item.SubItemCode);
+                $('#txtUnit').val(item.unit || item.Unit);
+                updateStock();
+            });
+        }
+
+        function updateStock() {
+            const w = $('#ddlWarehouse').val(); const i = $('#ddlItem').val();
+            $('#txtStock').val('');
+            if (!w || !i) return;
+            $.getJSON('/StockDamage/GetStock', { warehouseId: w, itemId: i }).done(s => {
+                $('#txtStock').val((s.quantity || s.Quantity || 0).toFixed(4));
+            });
+        }
+
+        function onCurrencyChange() {
+            const cur = $('#ddlCurrency').val();
+            const obj = currencies.find(c => (c.currencyName || c.CurrencyName) === cur);
+            $('#txtExchangeRate').val(obj ? (obj.conversionRate || obj.ConversionRate).toFixed(4) : '');
+            recalc();
+        }
+
+        function recalc() {
+            const qty = parseFloat($('#txtQuantity').val()) || 0;
+            const rate = parseFloat($('#txtRate').val()) || 0;
+            const amountIn = qty * rate;
+            $('#txtAmountIn').val(amountIn.toFixed(4));
+            const exch = parseFloat($('#txtExchangeRate').val()) || 0;
+            $('#txtTotalBDT').val((amountIn * exch).toFixed(4));
+        }
+
+        function onAdd(e) {
+            e.preventDefault();
+            const wId = $('#ddlWarehouse').val(); const wName = $('#ddlWarehouse option:selected').text();
+            const iId = $('#ddlItem').val(); const iName = $('#ddlItem option:selected').text();
+            const code = $('#txtItemCode').val(); const unit = $('#txtUnit').val();
+            const batch = $('#txtBatch').val() || 'NA';
+            const curr = $('#ddlCurrency').val();
+            const qty = parseFloat($('#txtQuantity').val()) || 0;
+            const rate = parseFloat($('#txtRate').val()) || 0;
+            const amtIn = parseFloat($('#txtAmountIn').val()) || 0;
+            const exch = parseFloat($('#txtExchangeRate').val()) || 0;
+            const total = parseFloat($('#txtTotalBDT').val()) || 0;
+            const stock = parseFloat($('#txtStock').val()) || 0;
+
+            if (!wId) { alert('Select Warehouse'); return; }
+            if (!iId) { alert('Select Item'); return; }
+            if (qty <= 0) { alert('Quantity must be > 0'); return; }
+            if (qty > stock) { alert('Quantity cannot exceed stock: ' + stock.toFixed(4)); return; }
+
+            const obj = {
+                GodownAutoSlNo: parseInt(wId),
+                GodownName: wName,
+                SubItemAutoSlNo: parseInt(iId),
+                SubItemName: iName,
+                ItemCode: code,
+                Unit: unit,
+                BatchNo: batch,
+                Currency: curr,
+                Quantity: qty,
+                Rate: rate,
+                AmountIn: amtIn,
+                ExchangeRate: exch,
+                AmountBDT: total
+            };
+
+            if (editIndex >= 0) { lines[editIndex] = obj; editIndex = -1; } else lines.push(obj);
+            clearInputs();
+            renderTable();
+        }
+
+        function clearInputs() {
+            $('#ddlWarehouse').val('');
+            $('#ddlItem').val('');
+            $('#txtItemCode,#txtUnit,#txtStock,#txtQuantity,#txtRate,#txtAmountIn,#txtTotalBDT').val('');
+            $('#txtBatch').val('NA');
+            $('#ddlCurrency').val('BDT').trigger('change');
+        }
+
+        function renderTable() {
+            const tbody = $('#tblBody'); tbody.empty();
+            let grand = 0;
+            lines.forEach((l, idx) => {
+                grand += l.AmountBDT;
+                const tr = $('<tr>');
+                tr.append($('<td>').text(idx + 1));
+                tr.append($('<td>').text(l.GodownName));
+                tr.append($('<td>').text(l.SubItemName));
+                tr.append($('<td>').text(l.ItemCode));
+                tr.append($('<td>').text(l.BatchNo));
+                tr.append($('<td>').text(l.Currency));
+                tr.append($('<td>').text(l.Quantity.toFixed(4)));
+                tr.append($('<td>').text(l.Rate.toFixed(4)));
+                tr.append($('<td>').text(l.AmountIn.toFixed(4)));
+                tr.append($('<td>').text(l.ExchangeRate.toFixed(4)));
+                tr.append($('<td>').text(l.AmountBDT.toFixed(4)));
+                const editBtn = $('<button>').addClass('btn btn-sm btn-outline-primary me-1').text('Edit').click(()=>editRow(idx));
+                const delBtn = $('<button>').addClass('btn btn-sm btn-outline-danger').text('Delete').click(()=>deleteRow(idx));
+                tr.append($('<td>').append(editBtn).append(delBtn));
+                tbody.append(tr);
+            });
+            $('#lblGrandTotal').text(grand.toFixed(4));
+        }
+
+        function editRow(i) {
+            const l = lines[i];
+            editIndex = i;
+            $('#ddlWarehouse').val(l.GodownAutoSlNo);
+            $('#ddlItem').val(l.SubItemAutoSlNo).trigger('change');
+            $('#txtItemCode').val(l.ItemCode);
+            $('#txtUnit').val(l.Unit);
+            $('#txtQuantity').val(l.Quantity);
+            $('#txtRate').val(l.Rate);
+            $('#txtAmountIn').val(l.AmountIn.toFixed(4));
+            $('#txtExchangeRate').val(l.ExchangeRate.toFixed(4));
+            $('#txtTotalBDT').val(l.AmountBDT.toFixed(4));
+            $('#txtBatch').val(l.BatchNo);
+            $('#ddlCurrency').val(l.Currency);
+            updateStock();
+        }
+
+        function deleteRow(i) {
+            if (!confirm('Delete row?')) return;
+            lines.splice(i,1); renderTable();
+        }
+
+        function onSave() {
+            if (!lines.length) { alert('No lines to save'); return; }
+            const req = {
+                date: $('#txtDate').val(),
+                employeeID: $('#ddlEmployee').val() ? parseInt($('#ddlEmployee').val()) : null,
+                comments: $('#txtComments').val(),
+                lines: lines.map(l => ({
+                    GodownAutoSlNo: l.GodownAutoSlNo,
+                    SubItemAutoSlNo: l.SubItemAutoSlNo,
+                    BatchNo: l.BatchNo,
+                    Currency: l.Currency,
+                    Quantity: l.Quantity,
+                    Rate: l.Rate,
+                    AmountIn: l.AmountIn,
+                    ExchangeRate: l.ExchangeRate,
+                    AmountBDT: l.AmountBDT
+                }))
+            };
+
+            $.ajax({
+                url: '/StockDamage/Save',
+                method: 'POST',
+                contentType: 'application/json',
+                data: JSON.stringify(req),
+                success: function (res) {
+                    if (res.success) {
+                        $('#txtVoucherNo').val(res.voucherNo);
+                        alert('Saved. Voucher: ' + res.voucherNo);
+                        lines = []; renderTable(); $('#txtComments').val('');
+                    } else {
+                        alert('Save failed: ' + (res.message || 'Unknown'));
+                    }
+                },
+                error: function(xhr) {
+                    alert('Save error: ' + (xhr.responseJSON?.message || xhr.responseText || 'Server error'));
+                }
+            });
+        }
+    </script>
+</body>
+</html>
