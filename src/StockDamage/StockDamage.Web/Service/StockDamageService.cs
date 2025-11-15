@@ -73,7 +73,7 @@ namespace StockDamage.Web.Service
             var result = new List<Currency>();
             try
             {
-                result = await _context.Currencie
+                result = await _context.Currency
                                        .AsNoTracking()
                                        .Where(whereCondition).ToListAsync();
                 return result;
@@ -115,21 +115,21 @@ namespace StockDamage.Web.Service
                 return result;
             }
         }
-        public async Task<List<StockDamageVoucher>> GetStockDamageVoucherAsync(Expression<Func<StockDamageVoucher, bool>> whereCondition)
-        {
-            var result = new List<StockDamageVoucher>();
-            try
-            {
-                result = await _context.StockDamageVoucher
-                                       .AsNoTracking()
-                                       .Where(whereCondition).ToListAsync();
-                return result;
-            }
-            catch (Exception e)
-            {
-                return result;
-            }
-        }
+        //public async Task<List<StockDamageVoucher>> GetStockDamageVoucherAsync(Expression<Func<StockDamageVoucher, bool>> whereCondition)
+        //{
+        //    var result = new List<StockDamageVoucher>();
+        //    try
+        //    {
+        //        result = await _context.StockDamageVoucher
+        //                               .AsNoTracking()
+        //                               .Where(whereCondition).ToListAsync();
+        //        return result;
+        //    }
+        //    catch (Exception e)
+        //    {
+        //        return result;
+        //    }
+        //}
 
         public Task<long> SaveStockDamageAsync(StockDamageSaveRequest request, CancellationToken cancellationToken = default)
         {

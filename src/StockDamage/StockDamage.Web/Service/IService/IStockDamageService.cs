@@ -13,7 +13,7 @@ namespace StockDamage.Web.Service.IService
         Task<List<Currency>> GetCurrenciesAsync(Expression<Func<Currency, bool>> whereCondition);
         Task<List<Employee>> GetEmployeesAsync(Expression<Func<Employee, bool>> whereCondition);
         Task<List<StockDamage.Web.Models.StockDamage>> GetStockDamageLineAsync(Expression<Func<StockDamage.Web.Models.StockDamage, bool>> whereCondition);
-        Task<List<StockDamageVoucher>> GetStockDamageVoucherAsync(Expression<Func<StockDamageVoucher, bool>> whereCondition);
+        //Task<List<StockDamageVoucher>> GetStockDamageVoucherAsync(Expression<Func<StockDamageVoucher, bool>> whereCondition);
          
         /// <summary>
         /// Saves all stock damage lines as a single voucher using stored procedure SP_StockDamage_Save.
