@@ -1,0 +1,67 @@
+﻿@using StockDamage.Web.Models.DTO
+@model IEnumerable<StockDamageViewDto>
+
+@{
+    ViewData["Title"] = "Stock Damage List";
+}
+
+<div class="container mt-4">
+
+    <h3 class="mb-3 fw-bold">📦 Stock Damage Records</h3>
+
+    <!-- Search box -->
+    <div class="row mb-3">
+        <div class="col-md-4">
+            <input id="searchBox" type="text" class="form-control" placeholder="Search... (Item, Voucher, Warehouse)">
+        </div>
+    </div>
+
+    <table class="table table-bordered table-hover table-striped" id="damageTable">
+        <thead class="table-dark">
+            <tr>
+                <th>Voucher</th>
+                <th>Date</th>
+                <th>Warehouse</th>
+                <th>Item</th>
+                <th>Code</th>
+                <th>Qty</th>
+                <th>Rate</th>
+                <th>Amount (BDT)</th>
+                <th>Employee</th>
+                <th>Comments</th>
+            </tr>
+        </thead>
+
+        <tbody>
+            @foreach (var x in Model)
+            {
+                <tr>
+                    <td>@x.VoucherNo</td>
+                    <td>@x.EntryDate.ToString("yyyy-MM-dd")</td>
+                    <td>@x.GodownName</td>
+                    <td>@x.SubItemName</td>
+                    <td>@x.SubItemCodeValue</td>
+                    <td class="text-end">@x.Quantity</td>
+                    <td class="text-end">@x.Rate.ToString("0.00")</td>
+                    <td class="text-end">@x.AmountBDT.ToString("0.00")</td>
+                    <td>@x.EmployeeName</td>
+                    <td>@x.Comments</td>
+                </tr>
+            }
+        </tbody>
+
+    </table>
+
+</div>
+
+<!-- jQuery Search Script -->
+<script>
+    $(document).ready(function () {
+        $("#searchBox").on("keyup", function () {
+            var value = $(this).val().toLowerCase();
+            $("#damageTable tbody tr").filter(function () {
+                $(this).toggle($(this).text().toLowerCase().indexOf(value) > -1)
+            });
+        });
+    });
+</script>

@@ -4,9 +4,11 @@ using StockDamage.Web.Data;
 using StockDamage.Web.Models;
 using StockDamage.Web.Models.DTO;
 using StockDamage.Web.Service.IService;
+using System.Collections;
 using System.Collections.Generic;
 using System.Data;
 using System.Linq.Expressions;
+using System.Security.Cryptography;
 using System.Threading;
 using System.Threading.Tasks; 
 
@@ -245,6 +247,25 @@ namespace StockDamage.Web.Service
                 }
             }
         }
+
+        public async Task<List<StockDamageViewDto>> GetStockDamageAsync()
+        { 
+            var conn = _context.Database.GetDbConnection();
+            var result = new List<StockDamageViewDto>();
+            try
+            {
+                result = await _context.Database
+                                        .SqlQuery<StockDamageViewDto>($"EXEC SP_GetStockDamage")
+                                        .ToListAsync();
+
+                return result;
+            }
+            catch (Exception e)
+            {
+                return result;
+            }
+        }
+
 
     }
 }

@@ -81,5 +81,12 @@ namespace StockDamage.Web.Controllers
             }
         }
 
+        public async Task<IActionResult> GetDamageStock()
+        {
+            var list = await _stockDamageService.GetStockDamageAsync();
+            return View(list);
+        }
+
+
     }
 }

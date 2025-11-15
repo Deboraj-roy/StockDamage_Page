@@ -21,6 +21,7 @@ namespace StockDamage.Web.Service.IService
         /// </summary>
         Task<string> SaveStockDamageAsync(StockDamageSaveRequest request);
         Task<string> SaveStockDamageAsync2(StockDamageSaveRequest request);
+        Task<List<StockDamageViewDto>> GetStockDamageAsync();
 
 
     }
