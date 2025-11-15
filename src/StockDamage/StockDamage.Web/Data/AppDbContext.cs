@@ -10,13 +10,13 @@ namespace StockDamage.Web.Data
      
         }
 
-        public DbSet<Godown> Godowns { get; set; } = null!;
-        public DbSet<SubItemCode> SubItemCodes { get; set; } = null!;
-        public DbSet<Stock> Stocks { get; set; } = null!;
-        public DbSet<Currency> Currencies { get; set; } = null!;
-        public DbSet<Employee> Employees { get; set; } = null!;
-        public DbSet<StockDamageLine> StockDamageLines { get; set; } = null!; // optional direct mapping
-        public DbSet<StockDamageVoucher> StockDamageVouchers { get; set; } = null!;
+        public DbSet<Godown> Godown { get; set; } = null!;
+        public DbSet<SubItemCode> SubItemCode { get; set; } = null!;
+        public DbSet<Stock> Stock { get; set; } = null!;
+        public DbSet<Currency> Currencie { get; set; } = null!;
+        public DbSet<Employee> Employee { get; set; } = null!;
+        public DbSet<StockDamageLine> StockDamageLine { get; set; } = null!; // optional direct mapping
+        public DbSet<StockDamageVoucher> StockDamageVoucher { get; set; } = null!;
 
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
