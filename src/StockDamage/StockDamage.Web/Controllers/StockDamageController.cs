@@ -65,5 +65,20 @@ namespace StockDamage.Web.Controllers
         //    if (result.Success) return Json(new { success = true, voucherNo = result.VoucherNo, id = result.Id });
         //    return Json(new { success = false, message = result.Message ?? "Save failed" });
         //}
+
+        [HttpPost]
+        public async Task<IActionResult> Save([FromBody] StockDamageSaveRequest request)
+        {
+            try
+            {
+                var voucher = await _stockDamageService.SaveStockDamageAsync(request);
+                return Ok(new { success = true, voucherNo = voucher });
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, new { success = false, message = ex.Message });
+            }
+        }
+
     }
 }

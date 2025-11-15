@@ -5,7 +5,7 @@ namespace StockDamage.Web.Models
     {
         [Key]
         public long AutoSlNo { get; set; }
-        public long VoucherNo { get; set; }
+        public string VoucherNo { get; set; }
         public DateTime EntryDate { get; set; }
         public long GodownAutoSlNo { get; set; }
         public long SubItemAutoSlNo { get; set; }

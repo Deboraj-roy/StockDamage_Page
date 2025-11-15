@@ -235,17 +235,24 @@
         var employees = [];
         var lines = [];
         var editIndex = -1;
+        var txtDate = $("#txtDate");
+        var txtVoucherNo = $("#txtVoucherNo");
+        var ddlWarehouse = $("#ddlWarehouse");
         var ddlSubItemNames = $("#ddlSubItemNames");
-        var txtUnit = $("#txtUnit");
         var txtItemCode = $("#txtItemCode");
+        var txtUnit = $("#txtUnit");
         var txtStockId = $("#txtStockId");
         var txtStock = $("#txtStock");
-        var ddlCurrency = $("#ddlCurrency");
-        var txtExchangeRate = $("#txtExchangeRate");
-        var txtAmountIn = $("#txtAmountIn");
-        var txtTotalBDT = $("#txtTotalBDT");
         var txtBatch = $("#txtBatch");
+        var ddlCurrency = $("#ddlCurrency");
+        var txtQuantity = $("#txtQuantity");
+        var txtRate = $("#txtRate");
+        var txtAmountIn = $("#txtAmountIn");
+        var txtExchangeRate = $("#txtExchangeRate");
+        var txtTotalBDT = $("#txtTotalBDT");
         var txtDrAC = $("#txtDrAC");
+        var ddlEmployee = $("#ddlEmployee");
+        var txtComments = $("#txtComments");
         var exchangeRate = 1;
 
 
@@ -388,24 +395,27 @@
 
         function onAdd(e) {
             e.preventDefault();
-            const wId = $('#ddlWarehouse').val(); const wName = $('#ddlWarehouse option:selected').text();
-            const iId = $('#ddlItem').val(); const iName = $('#ddlItem option:selected').text();
-            const code = $('#txtItemCode').val(); const unit = $('#txtUnit').val();
-            const batch = $('#txtBatch').val() || 'NA';
-            const curr = $('#ddlCurrency').val();
-            const qty = parseFloat($('#txtQuantity').val()) || 0;
-            const rate = parseFloat($('#txtRate').val()) || 0;
-            const amtIn = parseFloat($('#txtAmountIn').val()) || 0;
-            const exch = parseFloat($('#txtExchangeRate').val()) || 0;
-            const total = parseFloat($('#txtTotalBDT').val()) || 0;
-            const stock = parseFloat($('#txtStock').val()) || 0;
+            var wId = $('#ddlWarehouse').val();
+            var wName = $('#ddlWarehouse option:selected').text();
+            var iId = $('#ddlSubItemNames').val();
+            var iName = $('#ddlSubItemNames option:selected').text();
+            var code = $('#txtItemCode').val(); 
+            var unit = $('#txtUnit').val();
+            var batch = $('#txtBatch').val() || 'NA';
+            var curr = $('#ddlCurrency').val();
+            var qty = parseFloat($('#txtQuantity').val()) || 0;
+            var rate = parseFloat($('#txtRate').val()) || 0;
+            var amtIn = parseFloat($('#txtAmountIn').val()) || 0;
+            var exch = parseFloat($('#txtExchangeRate').val()) || 0;
+            var total = parseFloat($('#txtTotalBDT').val()) || 0;
+            var stock = parseFloat($('#txtStock').val()) || 0;
 
             if (!wId) { alert('Select Warehouse'); return; }
             if (!iId) { alert('Select Item'); return; }
             if (qty <= 0) { alert('Quantity must be > 0'); return; }
             if (qty > stock) { alert('Quantity cannot exceed stock: ' + stock.toFixed(4)); return; }
 
-            const obj = {
+            var obj = {
                 GodownAutoSlNo: parseInt(wId),
                 GodownName: wName,
                 SubItemAutoSlNo: parseInt(iId),
@@ -428,7 +438,7 @@
 
         function clearInputs() {
             $('#ddlWarehouse').val('');
-            $('#ddlItem').val('');
+            $('#ddlSubItemNames').val('');
             $('#txtItemCode,#txtUnit,#txtStock,#txtQuantity,#txtRate,#txtAmountIn,#txtTotalBDT').val('');
             $('#txtBatch').val('NA');
             $('#ddlCurrency').val('BDT').trigger('change');
@@ -436,7 +446,7 @@
 
         function renderTable() {
             const tbody = $('#tblBody'); tbody.empty();
-            let grand = 0;
+            var grand = 0;
             lines.forEach((l, idx) => {
                 grand += l.AmountBDT;
                 const tr = $('<tr>');

@@ -135,5 +135,11 @@ namespace StockDamage.Web.Service
         {
             throw new System.NotImplementedException();
         }
+
+        private string GenerateVoucher()
+        {
+            return "SD-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
+        }
+
     }
 }
