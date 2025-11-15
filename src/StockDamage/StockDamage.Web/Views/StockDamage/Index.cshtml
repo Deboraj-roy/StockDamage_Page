@@ -23,13 +23,15 @@
                         <input type="date" id="txtDate" class="form-control mb-2" />
 
                         <label>Voucher No</label>
-                        <input type="text" id="txtVoucherNo" class="form-control mb-2 readonly" readonly />
+                        <input type="text" id="txtVoucherNo" class="form-control mb-2 readonly" />
 
-                        <label>Warehouse Name *</label>
-                        <select id="ddlWarehouse" class="form-select mb-2"></select>
+                        <label for="ddlWarehouse">Warehouse Name *</label>
+                        @Html.DropDownList("ddlWarehouse", (IEnumerable<SelectListItem>)ViewBag.ddlGodowns, "Select Warehouse", new { @class = "form-select mb-2", id = "ddlWarehouse" })
 
-                        <label>Item Name *</label>
-                        <select id="ddlItem" class="form-select mb-2"></select>
+
+                        <label for="ddlSubItemNames">Item Name *</label>
+                        @* <select id="ddlItem" class="form-select mb-2"></select> *@
+                        @Html.DropDownList("ddlSubItemNames", (IEnumerable<SelectListItem>)ViewBag.ddlSubItemNames, "Select Item", new { @class = "form-select mb-2", id = "ddlSubItemNames" })
 
                         <div class="mb-2 d-flex align-items-center">
                             <div style="flex:1">
@@ -46,7 +48,13 @@
                         <input id="txtStock" class="form-control readonly mb-2" readonly />
 
                         <label>Batch No</label>
-                        <input id="txtBatch" class="form-control readonly mb-2" value="NA" readonly />
+                        @* <input id="txtBatch" class="form-control readonly mb-2" value="NA"/> *@
+                        <select id="txtBatch" class="form-control form-control-sm select2">
+                            <option value="NA">NA</option>
+                            <option value="B001">B001</option>
+                            <option value="B002">B002</option>
+                            <option value="B003">B003</option>
+                        </select>
 
                         <div class="text-end">
                             <button id="btnAdd" class="btn btn-primary">Add</button>
@@ -125,7 +133,27 @@
     <script src="https://code.jquery.com/jquery-3.7.1.min.js"></script>
     <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/js/bootstrap.bundle.min.js"></script>
     <script>
-        let warehouses = [], items = [], currencies = [], employees = [], lines = [], editIndex = -1;
+
+        var warehouses = []; 
+        var items = [];
+        var currencies = []; 
+        var employees = []; 
+        var lines = []; 
+        var editIndex = -1;
+        var ddlSubItemNames = $("#ddlSubItemNames");
+         
+
+        ddlSubItemNames.change(function () { 
+            var data = { itemId: ddlSubItemNames.val() };
+            $.when(getReqWithData(JSON, type.post, '/StockDamage/GetItemDetails', data)).then(function (res, status) {
+                if (status === "success") {
+                    console.log(res);
+                }
+            }).fail(function (error) {
+                consoleLog(error);
+            })
+           
+        });
 
         $(function () {
             $('#txtDate').val(new Date().toISOString().slice(0,10));
@@ -140,14 +168,15 @@
         });
 
         function loadAll() {
-            $.getJSON('/StockDamage/GetWarehouses').done(data => { warehouses = data; fillWarehouses(); });
-            $.getJSON('/StockDamage/GetItems').done(data => { items = data; fillItems(); });
-            $.getJSON('/StockDamage/GetCurrencies').done(data => { currencies = data; fillCurrencies(); });
-            $.getJSON('/StockDamage/GetEmployees').done(data => { employees = data; fillEmployees(); });
+            // $.getJSON('/StockDamage/GetWarehouses').done(data => { warehouses = data; fillWarehouses(); });
+            // $.getJSON('/StockDamage/GetItems').done(data => { items = data; fillItems(); });
+            // $.getJSON('/StockDamage/GetCurrencies').done(data => { currencies = data; fillCurrencies(); });
+            // $.getJSON('/StockDamage/GetEmployees').done(data => { employees = data; fillEmployees(); });
         }
 
         function fillWarehouses() {
-            let ddl = $('#ddlWarehouse'); ddl.empty().append('<option value="">--Select--</option>');
+            var ddl = $('#ddlWarehouse'); 
+            ddl.empty().append('<option value="">--Select--</option>');
             warehouses.forEach(w => ddl.append($('<option>').val(w.autoSlNo || w.AutoSlNo).text(w.godownName || w.GodownName)));
         }
 
