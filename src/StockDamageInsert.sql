@@ -174,3 +174,78 @@ BEGIN
 	END
 
 GO
+
+
+ 
+SET ANSI_NULLS ON
+GO
+SET QUOTED_IDENTIFIER ON
+GO
+-- =============================================
+-- Author:		DEBORAJ
+-- Create date: <16-11-2025>
+-- Description:	
+-- =============================================
+CREATE PROCEDURE [dbo].SP_TableName_Save
+	@VoucherNo NVARCHAR(100) OUTPUT, -- if 0 or NULL, create header
+    @EntryDate DATE,
+    @GodownAutoSlNo INT,
+    @SubItemAutoSlNo INT,
+    @BatchNo NVARCHAR(50),
+    @Currency BigInt,
+    @Quantity DECIMAL(18,4),
+    @Rate DECIMAL(18,4),
+    @AmountIn DECIMAL(18,4),
+    @ExchangeRate DECIMAL(18,6),
+    @AmountBDT DECIMAL(18,4),
+    @DrACHead NVARCHAR(200),
+    @EmployeeID INT = NULL,
+    @Comments NVARCHAR(1000) = NULL
+AS
+BEGIN
+    SET NOCOUNT ON;
+    SET XACT_ABORT ON;
+
+    BEGIN TRY
+        BEGIN TRANSACTION;
+
+        IF @VoucherNo IS NULL OR @VoucherNo = ''
+        
+
+        DECLARE @CurrentStock DECIMAL(18,4);
+        SELECT @CurrentStock = Quantity FROM [dbo].[Stock] WHERE GodownAutoSlNo = @GodownAutoSlNo AND SubItemAutoSlNo = @SubItemAutoSlNo;
+
+        IF @CurrentStock IS NULL
+        BEGIN
+            RAISERROR('Stock record not found for selected Warehouse and Item.',16,1);
+            ROLLBACK TRANSACTION;
+            RETURN;
+        END
+ 
+        INSERT INTO [dbo].[StockDamage]
+        (
+            VoucherNo, EntryDate, GodownAutoSlNo, SubItemAutoSlNo, BatchNo,
+            CurrencyId, Quantity, Rate, AmountIn, ExchangeRate, AmountBDT,
+            DrACHead, EmployeeID, Comments, CreateDate
+        )
+        VALUES
+        (
+            @VoucherNo, @EntryDate, @GodownAutoSlNo, @SubItemAutoSlNo, @BatchNo,
+            @Currency, @Quantity, @Rate, @AmountIn, @ExchangeRate, @AmountBDT,
+            @DrACHead, @EmployeeID, @Comments, GETDATE()
+        );
+
+        UPDATE dbo.Stock
+        SET Quantity = Quantity - @Quantity
+        WHERE GodownAutoSlNo = @GodownAutoSlNo AND SubItemAutoSlNo = @SubItemAutoSlNo;
+
+        COMMIT TRANSACTION;
+    END TRY
+    BEGIN CATCH
+        IF XACT_STATE() <> 0 ROLLBACK TRANSACTION;
+        DECLARE @ErrMsg NVARCHAR(4000) = ERROR_MESSAGE();
+        RAISERROR('Error SP_StockDamage_Save: %s',16,1,@ErrMsg);
+    END CATCH
+	END
+
+GO
