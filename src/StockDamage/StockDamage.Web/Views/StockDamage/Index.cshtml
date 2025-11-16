@@ -401,6 +401,7 @@
             var code = $('#txtItemCode').val(); 
             var unit = $('#txtUnit').val();
             var batch = $('#txtBatch').val() || 'NA';
+            var drAC = $('#txtDrAC').val() || 'Stock Damage';
             var curr = $('#ddlCurrency').val();
             var qty = parseFloat($('#txtQuantity').val()) || 0;
             var rate = parseFloat($('#txtRate').val()) || 0;
@@ -422,6 +423,7 @@
                 ItemCode: code,
                 Unit: unit,
                 BatchNo: batch,
+                DrACHead: drAC,
                 Currency: curr,
                 Quantity: qty,
                 Rate: rate,
@@ -482,6 +484,7 @@
             $('#txtTotalBDT').val(l.AmountBDT.toFixed(4));
             $('#txtBatch').val(l.BatchNo);
             $('#ddlCurrency').val(l.Currency);
+            $('#txtDrAC').val(l.DrACHead);
             updateStock();
         }
 
@@ -505,7 +508,8 @@
                     Rate: l.Rate,
                     AmountIn: l.AmountIn,
                     ExchangeRate: l.ExchangeRate,
-                    AmountBDT: l.AmountBDT
+                    AmountBDT: l.AmountBDT,
+                    DrACHead: l.DrACHead
                 }))
             };
 

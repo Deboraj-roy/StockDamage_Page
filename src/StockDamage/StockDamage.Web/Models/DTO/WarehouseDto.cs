@@ -45,6 +45,8 @@
 
         public long AutoSlNo { get; set; }
         public long StockDamageId { get; set; }
+        public string DrACHead { get; set; } = "Stock Damage";
+
     }
 
     public class StockDamageSaveRequest

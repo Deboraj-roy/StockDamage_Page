@@ -227,7 +227,7 @@ namespace StockDamage.Web.Service
                         cmd.Parameters.Add(new SqlParameter("@AmountIn", line.AmountIn));
                         cmd.Parameters.Add(new SqlParameter("@ExchangeRate", line.ExchangeRate));
                         cmd.Parameters.Add(new SqlParameter("@AmountBDT", line.AmountBDT));
-                        cmd.Parameters.Add(new SqlParameter("@DrACHead", "Stock Damage"));
+                        cmd.Parameters.Add(new SqlParameter("@DrACHead", line.DrACHead));
                         cmd.Parameters.Add(new SqlParameter("@EmployeeID", (object?)request.EmployeeID ?? DBNull.Value));
                         cmd.Parameters.Add(new SqlParameter("@Comments", (object?)request.Comments ?? DBNull.Value));
 
