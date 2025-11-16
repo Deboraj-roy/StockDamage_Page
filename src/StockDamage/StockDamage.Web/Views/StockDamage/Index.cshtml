@@ -6,6 +6,7 @@
     <meta name="viewport" content="width=device-width,initial-scale=1" />
 
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.2/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
 
     <style>
         body {
@@ -42,8 +43,7 @@
     <div class="container">
 
         <div class="mb-4">
-            <h2 class="fw-bold text-primary">Stock Damage Entry</h2>
-            <small class="text-muted">Record damaged stock with proper valuation</small>
+            <h2 class="fw-bold text-primary">Stock Damage</h2> 
         </div>
 
         <form id="formDamage" onsubmit="return false;">
@@ -53,8 +53,6 @@
                 <!-- LEFT SIDE -->
                 <div class="col-md-6">
                     <div class="card shadow-sm p-4">
-
-                        <div class="section-title">Item & Warehouse Info</div>
 
                         <div class="mb-3">
                             <label class="form-label">Date</label>
@@ -115,18 +113,14 @@
                             </select>
                         </div>
 
-                        <div class="text-end mt-3">
-                            <button id="btnAdd" class="btn btn-primary px-4">Add Item</button>
-                        </div>
+                        
                     </div>
                 </div>
 
                 <!-- RIGHT SIDE -->
                 <div class="col-md-6">
                     <div class="card shadow-sm p-4">
-
-                        <div class="section-title">Value & Currency</div>
-
+                        
                         <div class="mb-3">
                             <label class="form-label">Currency</label>
                             @Html.DropDownList("ddlCurrency", (IEnumerable<SelectListItem>)ViewBag.ddlCurrency,
@@ -188,10 +182,15 @@
 
             </div>
 
+            
+            <div class="mt-3">
+                <button id="btnAdd" class="btn btn-left btn-primary px-4">
+                    <i class="fa fa-plus me-1"></i>Add</button>
+            </div> 
+
             <!-- TABLE -->
             <div class="card shadow-sm p-4 mt-4">
-                <h5 class="section-title">Damage Item List</h5>
-
+                 
                 <div class="table-responsive">
                     <table class="table table-bordered" id="tblLines">
                         <thead class="table-light">
@@ -215,8 +214,8 @@
                 </div>
 
                 <div class="d-flex justify-content-between mt-3">
-                    <h5 class="fw-bold">Grand Total: <span id="lblGrandTotal">0.00</span> BDT</h5>
                     <button id="btnSave" class="btn btn-success btn-lg px-4">Save</button>
+                    <h5 class="fw-bold">Grand Total: <span id="lblGrandTotal">0.00</span> BDT</h5>
                 </div>
             </div>
 
@@ -327,27 +326,27 @@
             // $.getJSON('/StockDamage/GetEmployees').done(data => { employees = data; fillEmployees(); });
         }
 
-        function fillWarehouses() {
-            var ddl = $('#ddlWarehouse');
-            ddl.empty().append('<option value="">--Select--</option>');
-            warehouses.forEach(w => ddl.append($('<option>').val(w.autoSlNo || w.AutoSlNo).text(w.godownName || w.GodownName)));
-        }
+        // function fillWarehouses() {
+        //     var ddl = $('#ddlWarehouse');
+        //     ddl.empty().append('<option value="">--Select--</option>');
+        //     warehouses.forEach(w => ddl.append($('<option>').val(w.autoSlNo || w.AutoSlNo).text(w.godownName || w.GodownName)));
+        // }
 
-        function fillItems() {
-            let ddl = $('#ddlItem'); ddl.empty().append('<option value="">--Select--</option>');
-            items.forEach(i => ddl.append($('<option>').val(i.autoSlNo || i.AutoSlNo).text(i.subItemName || i.SubItemName)));
-        }
+        // function fillItems() {
+        //     let ddl = $('#ddlItem'); ddl.empty().append('<option value="">--Select--</option>');
+        //     items.forEach(i => ddl.append($('<option>').val(i.autoSlNo || i.AutoSlNo).text(i.subItemName || i.SubItemName)));
+        // }
 
-        function fillCurrencies() {
-            let ddl = $('#ddlCurrency'); ddl.empty();
-            currencies.forEach(c => ddl.append($('<option>').val(c.currencyName || c.CurrencyName).text(c.currencyName || c.CurrencyName)));
-            $('#ddlCurrency').val('BDT').trigger('change');
-        }
+        // function fillCurrencies() {
+        //     let ddl = $('#ddlCurrency'); ddl.empty();
+        //     currencies.forEach(c => ddl.append($('<option>').val(c.currencyName || c.CurrencyName).text(c.currencyName || c.CurrencyName)));
+        //     $('#ddlCurrency').val('BDT').trigger('change');
+        // }
 
-        function fillEmployees() {
-            let ddl = $('#ddlEmployee'); ddl.empty().append('<option value="">--Select--</option>');
-            employees.forEach(e => ddl.append($('<option>').val(e.employeeID || e.EmployeeID).text(e.employeeName || e.EmployeeName)));
-        }
+        // function fillEmployees() {
+        //     let ddl = $('#ddlEmployee'); ddl.empty().append('<option value="">--Select--</option>');
+        //     employees.forEach(e => ddl.append($('<option>').val(e.employeeID || e.EmployeeID).text(e.employeeName || e.EmployeeName)));
+        // }
 
         function onItemChange() {
             const id = $('#ddlItem').val();

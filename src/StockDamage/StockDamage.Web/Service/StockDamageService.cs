@@ -211,7 +211,8 @@ namespace StockDamage.Web.Service
                         //var pVoucherNo = new SqlParameter("@VoucherNo", voucherNo) { Direction = System.Data.ParameterDirection.InputOutput, Value = voucherNo };
                         var cmd = conn.CreateCommand();
                         cmd.Transaction = transaction;
-                        cmd.CommandText = "dbo.SP_StockDamage_Save";
+                        cmd.CommandText = "dbo.SP_TableName_Save";
+                        //cmd.CommandText = "dbo.SP_StockDamage_Save";
                         cmd.CommandType = System.Data.CommandType.StoredProcedure;
 
                         //cmd.Parameters.Add(pVoucherNo);
@@ -250,7 +251,7 @@ namespace StockDamage.Web.Service
 
         public async Task<List<StockDamageViewDto>> GetStockDamageAsync()
         { 
-            var conn = _context.Database.GetDbConnection();
+            //var conn = _context.Database.GetDbConnection();
             var result = new List<StockDamageViewDto>();
             try
             {
