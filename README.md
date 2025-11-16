@@ -248,3 +248,16 @@ If you want, I can:
 <img width="1897" height="729" alt="localhost_7103_StockDamage_GetDamageStock" src="https://github.com/user-attachments/assets/3a6c1a97-9cc2-4346-9312-ddd1cb764d68" />
 
 ---
+<!--
+https://github.com/user-attachments/assets/73493a65-928c-44fa-86e5-994474d606a0
+
+---
+ [Watch Demo Video](https://github.com/user-attachments/assets/73493a65-928c-44fa-86e5-994474d606a0)  
+
+---
+-->
+
+[![Watch the video](https://img.youtube.com/vi/VIDEO_ID/maxresdefault.jpg)](https://github.com/user-attachments/assets/73493a65-928c-44fa-86e5-994474d606a0)
+
+---
+
