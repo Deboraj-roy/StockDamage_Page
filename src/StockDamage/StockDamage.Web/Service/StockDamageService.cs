@@ -10,7 +10,7 @@ using System.Data;
 using System.Linq.Expressions;
 using System.Security.Cryptography;
 using System.Threading;
-using System.Threading.Tasks; 
+using System.Threading.Tasks;
 
 namespace StockDamage.Web.Service
 {
@@ -119,28 +119,11 @@ namespace StockDamage.Web.Service
                 return result;
             }
         }
-        //public async Task<List<StockDamageVoucher>> GetStockDamageVoucherAsync(Expression<Func<StockDamageVoucher, bool>> whereCondition)
-        //{
-        //    var result = new List<StockDamageVoucher>();
-        //    try
-        //    {
-        //        result = await _context.StockDamageVoucher
-        //                               .AsNoTracking()
-        //                               .Where(whereCondition).ToListAsync();
-        //        return result;
-        //    }
-        //    catch (Exception e)
-        //    {
-        //        return result;
-        //    }
-        //}
-
 
         private string GenerateVoucher()
         {
             return "SD-" + DateTime.UtcNow.ToString("yyyyMMdd-HHmmss");
         }
-
 
         public async Task<string> SaveStockDamageAsync2(StockDamageSaveRequest request)
         {
@@ -189,7 +172,7 @@ namespace StockDamage.Web.Service
                 throw;
             }
         }
-        
+
         public async Task<string> SaveStockDamageAsync(StockDamageSaveRequest request)
         {
             if (request == null) throw new ArgumentNullException(nameof(request));
@@ -250,7 +233,7 @@ namespace StockDamage.Web.Service
         }
 
         public async Task<List<StockDamageViewDto>> GetStockDamageAsync()
-        { 
+        {
             //var conn = _context.Database.GetDbConnection();
             var result = new List<StockDamageViewDto>();
             try

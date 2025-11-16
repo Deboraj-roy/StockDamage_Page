@@ -16,24 +16,24 @@ namespace StockDamage.Web.Controllers
         }
         public async Task<IActionResult> Index()
         {
-            ViewBag.ddlGodowns = new SelectList( await _stockDamageService.GetGodownsAsync(s => s.AutoSlNo > 0), "AutoSlNo", "GodownName");
-            ViewBag.ddlEmployees = new SelectList( await _stockDamageService.GetEmployeesAsync(s => s.EmployeeID > 0), "EmployeeID", "EmployeeName");
-            ViewBag.ddlCurrency = new SelectList( await _stockDamageService.GetCurrenciesAsync(s => s.CurrencyId > 0), "CurrencyId", "CurrencyName");
-            ViewBag.ddlGodowns = new SelectList( await _stockDamageService.GetGodownsAsync(s => s.AutoSlNo > 0), "AutoSlNo", "GodownName");
-            ViewBag.ddlSubItemNames = new SelectList( await _stockDamageService.GetSubItemCodeAsync(s => s.AutoSlNo > 0), "AutoSlNo", "SubItemName");
+            ViewBag.ddlGodowns = new SelectList(await _stockDamageService.GetGodownsAsync(s => s.AutoSlNo > 0), "AutoSlNo", "GodownName");
+            ViewBag.ddlEmployees = new SelectList(await _stockDamageService.GetEmployeesAsync(s => s.EmployeeID > 0), "EmployeeID", "EmployeeName");
+            ViewBag.ddlCurrency = new SelectList(await _stockDamageService.GetCurrenciesAsync(s => s.CurrencyId > 0), "CurrencyId", "CurrencyName");
+            ViewBag.ddlGodowns = new SelectList(await _stockDamageService.GetGodownsAsync(s => s.AutoSlNo > 0), "AutoSlNo", "GodownName");
+            ViewBag.ddlSubItemNames = new SelectList(await _stockDamageService.GetSubItemCodeAsync(s => s.AutoSlNo > 0), "AutoSlNo", "SubItemName");
 
             return View();
         }
-         
+
         public async Task<IActionResult> GetItemDetails(long itemId)
         {
             var item = (await _stockDamageService.GetSubItemCodeAsync(s => s.AutoSlNo == itemId)).FirstOrDefault();
             if (item == null) return Json(new { SubItemCode = "", Unit = 0, stockId = 0, stockqty = 0 });
 
             var stock = (await _stockDamageService.GetStockAsync(s => s.SubItemAutoSlNo == itemId)).FirstOrDefault();
-            return Json(new { SubItemCode = item.SubItemCodeValue, Unit = item.Unit , stockId = stock.AutoSlNo, stockqty = stock.Quantity });
+            return Json(new { SubItemCode = item.SubItemCodeValue, Unit = item.Unit, stockId = stock.AutoSlNo, stockqty = stock.Quantity });
         }
-         
+
         public async Task<IActionResult> GetStock(long warehouseId, long itemId)
         {
             var s = await _stockDamageService.GetStockAsync(st => st.GodownAutoSlNo == warehouseId && st.SubItemAutoSlNo == itemId);
