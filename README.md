@@ -229,10 +229,22 @@ Note: For local SQL Server use host.docker.internal and ensure SQL Server accept
   - Validation & anti-forgery protections for the UI.
 
 ---
-<img width="815" height="2021" alt="image" src="https://github.com/user-attachments/assets/c89118f8-b284-4a87-b2cc-9aeaec896038" />
 
 If you want, I can:
 - Generate a sample `appsettings.json` with placeholders,
 - Create EF Core seed code for Godown/SubItemCode/Currency/Employee,
 - Provide the stored procedure SQL `SP_TableName_Save` example that accepts JSON and inserts rows in a single transaction.
- 
+
+---
+
+<img width="815" height="2021" alt="image" src="https://github.com/user-attachments/assets/c89118f8-b284-4a87-b2cc-9aeaec896038" />
+
+---
+
+<img width="1921" height="1369" alt="localhost_7103_" src="https://github.com/user-attachments/assets/d03d0888-b5b8-4657-afbc-61ddf542a59e" />
+
+---
+
+<img width="1897" height="729" alt="localhost_7103_StockDamage_GetDamageStock" src="https://github.com/user-attachments/assets/3a6c1a97-9cc2-4346-9312-ddd1cb764d68" />
+
+---
