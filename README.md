@@ -229,6 +229,7 @@ Note: For local SQL Server use host.docker.internal and ensure SQL Server accept
   - Validation & anti-forgery protections for the UI.
 
 ---
+<img width="815" height="2021" alt="image" src="https://github.com/user-attachments/assets/c89118f8-b284-4a87-b2cc-9aeaec896038" />
 
 If you want, I can:
 - Generate a sample `appsettings.json` with placeholders,
